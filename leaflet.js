@@ -10,7 +10,7 @@ var mymap = L.map('mapid', {
 
 mymap.setMaxBounds(new L.LatLngBounds([-200,1000], [500,-500]));
 
-var imageUrl ='C:/Users/admpdi.UO631M40008566/Documents/Taggen/download.jpg'
+var imageUrl ='C:/Users/admpdi.UO631M40008566/Documents/Taggen/plant.png'
 var imageBounds = [[250,0], [0,500]];
 
 L.imageOverlay(imageUrl, imageBounds).addTo(mymap);
@@ -18,16 +18,6 @@ L.imageOverlay(imageUrl, imageBounds).addTo(mymap);
 
 
 let btn = document.querySelector(".btn");
-
-// Adiciona a camada de mapa com as funcionalidades (leaflet)
-// L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { 
-//     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-//     maxZoom: 18,
-//     id: 'mapbox/streets-v11',
-//     tileSize: 512,
-//     zoomOffset: -1,
-//     accessToken: 'your.mapbox.access.token'
-// }).addTo(mymap);
 
 
 // Adiciona a funcionalidade de obter os dados do banco de dados e os printa como circulos no mapa. 

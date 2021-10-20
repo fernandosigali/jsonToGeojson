@@ -14,9 +14,20 @@ conn = new pg.Client({
 conn.connect();
 
 async function insert(table_name, obj){
-    console.log(`INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`);
+    // console.log(`INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`);
     await conn.query(
-        `INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`
+        `INSERT INTO ${table_name} (name, geom) 
+            VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`
+    );
+}
+
+async function create(table_name, type_geom){
+    // console.log(`INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`);
+    await conn.query(
+        `CREATE TABLE IF NOT EXISTS ${table_name} (
+            name VARCHAR,
+            geom geometry(${type_geom})
+            )`
     );
 }
 
@@ -26,12 +37,8 @@ let js_data = JSON.parse(json_data);
 let cells = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["cellGeometry"];
 if (cells.length > 0){
     // Query para db
-    conn.query(
-        `CREATE TABLE IF NOT EXISTS cells (
-            name VARCHAR,
-            geom geometry(Polygon)
-            )`
-    );
+    create('cells', 'Polygon');
+
     let polis = [];
     for(var i in cells){
         let property = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["propertyContainer"]["cellProperties"][i];
@@ -55,12 +62,7 @@ if (cells.length > 0){
 let states = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["stateGeometry"];
 if (states.length > 0){
     
-    conn.query(
-        `CREATE TABLE IF NOT EXISTS states (
-            name VARCHAR,
-            geom geometry(Point)
-            )`
-    );
+    create('states', 'Point');
 
     let pts = [];
     for(var i in states){
@@ -83,12 +85,7 @@ let transitions = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryConta
 if (transitions.length > 0){
     
     
-    conn.query(
-        `CREATE TABLE IF NOT EXISTS transitions (
-            name VARCHAR,
-            geom geometry(LineString)
-            )`
-    );
+    create('transitions', 'LineString');
 
     let lines = [];
     for(var i in transitions){

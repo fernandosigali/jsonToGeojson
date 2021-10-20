@@ -1,43 +1,21 @@
 
+
+
+
+//////// REQUIRE
 let fs = require("fs");
-let pg = require("pg");
+////////////////
 
-// Conexão com o banco de dados
-conn = new pg.Client({
-    host: "localhost",
-    database: "editor_geometries",
-    user: "testes",
-    password: "testes",
-    port: "5432"
-}
-);
-conn.connect();
 
-async function insert(table_name, obj){
-    // console.log(`INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`);
-    await conn.query(
-        `INSERT INTO ${table_name} (name, geom) 
-            VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`
-    );
-}
 
-async function create(table_name, type_geom){
-    // console.log(`INSERT INTO ${table_name} (name, geom) VALUES ('${obj.properties.name}', ST_GeomFromGeoJSON('${JSON.stringify(obj.geometry)}'))`);
-    await conn.query(
-        `CREATE TABLE IF NOT EXISTS ${table_name} (
-            name VARCHAR,
-            geom geometry(${type_geom})
-            )`
-    );
-}
-
+//////// JSON RAW
 let json_data = fs.readFileSync("main_c_transition.json");
+/////////
+
 let js_data = JSON.parse(json_data);
 
 let cells = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["cellGeometry"];
 if (cells.length > 0){
-    // Query para db
-    create('cells', 'Polygon');
 
     let polis = [];
     for(var i in cells){
@@ -52,17 +30,14 @@ if (cells.length > 0){
         for(let p of cells[i].points){
             poli.geometry.coordinates[0].push([p.point.x, p.point.y]);
         }
-        insert('cells', poli);
         polis.push(poli);
     }
-    console.log(polis);
+    // console.log(polis);
 }
 
 
 let states = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["stateGeometry"];
 if (states.length > 0){
-    
-    create('states', 'Point');
 
     let pts = [];
     for(var i in states){
@@ -74,19 +49,15 @@ if (states.length > 0){
             },
             properties: {name: property.name}
         }
-        insert('states', pt);
         pts.push(pt);
     }
-    console.log(pts);
+    // console.log(pts);
 }
 
 
 let transitions = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["transitionGeometry"];
 if (transitions.length > 0){
     
-    
-    create('transitions', 'LineString');
-
     let lines = [];
     for(var i in transitions){
         let property = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["propertyContainer"]["transitionProperties"][i];
@@ -100,8 +71,7 @@ if (transitions.length > 0){
         for(let p of transitions[i].points){
             line.geometry.coordinates.push([p.point.x, p.point.y]);
         }
-        insert('transitions', line);
         lines.push(line);
-        }
-    console.log(lines)
+    }
+    // console.log(lines)
 }

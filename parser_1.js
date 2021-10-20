@@ -1,19 +1,11 @@
 
-
-
-
-//////// REQUIRE
 let fs = require("fs");
-////////////////
 
-
-
-//////// JSON RAW
 let json_data = fs.readFileSync("main_c_transition.json");
-/////////
-
 let js_data = JSON.parse(json_data);
 
+
+let height = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["canvasContainer"]["F1"]["height"];
 let cells = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["cellGeometry"];
 if (cells.length > 0){
 
@@ -28,11 +20,12 @@ if (cells.length > 0){
                 properties: {name: property.name},
             };
         for(let p of cells[i].points){
-            poli.geometry.coordinates[0].push([p.point.x, p.point.y]);
+            poli.geometry.coordinates[0].push([p.point.x, height - p.point.y]);
         }
         polis.push(poli);
     }
-    // console.log(polis);
+    console.log(polis);
+    fs.writeFileSync('polis.json',JSON.stringify(polis));
 }
 
 
@@ -45,19 +38,19 @@ if (states.length > 0){
         let pt = {
             geometry: {
                 type: "Point",
-                coordinates: [states[i].point.point.x, states[i].point.point.y],
+                coordinates: [states[i].point.point.x, height - states[i].point.point.y],
             },
             properties: {name: property.name}
         }
         pts.push(pt);
     }
-    // console.log(pts);
+    console.log(pts);
 }
 
 
 let transitions = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["geometryContainer"]["transitionGeometry"];
 if (transitions.length > 0){
-    
+
     let lines = [];
     for(var i in transitions){
         let property = js_data["ic1cf5b6-b863-38b4-56c9-918af9253ae5"]["propertyContainer"]["transitionProperties"][i];
@@ -69,9 +62,11 @@ if (transitions.length > 0){
             properties: {name: property.name}
             };
         for(let p of transitions[i].points){
-            line.geometry.coordinates.push([p.point.x, p.point.y]);
+            line.geometry.coordinates.push([p.point.x, height - p.point.y]);
         }
         lines.push(line);
-    }
-    // console.log(lines)
+        }
+    console.log(lines)
 }
+
+
